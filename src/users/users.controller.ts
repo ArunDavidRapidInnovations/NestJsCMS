@@ -21,14 +21,14 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
+  @Get('/me')
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  findOne(@Param('id') id: string): Promise<User> {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')

@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Exclude } from 'class-transformer';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 import { Document } from 'mongoose';
 
@@ -23,10 +24,10 @@ export class User {
   @IsString()
   description: string;
 
-  // @Prop(Buffer)
-  // @IsOptional()
-  // @IsBase64()
-  // avatar: string;
+  @Prop({ data: Buffer, contentType: String })
+  @IsOptional()
+  @IsString()
+  avatar: string;
 
   @Prop([String])
   @IsString({ each: true })
@@ -34,5 +35,16 @@ export class User {
 }
 
 const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.set('toJSON', {
+  transform: function (doc, ret, options) {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+    delete ret.accessTokens;
+    delete ret.avatar;
+    delete ret.password;
+  },
+});
 
 export { UserSchema };
