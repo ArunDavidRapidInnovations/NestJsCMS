@@ -1,7 +1,6 @@
+import { User } from '../schemas/user.schema';
+
 export interface SigningResponse {
   accessToken: string;
-  userData: {
-    id: string;
-    username: string;
-  };
+  userData: User;
 }

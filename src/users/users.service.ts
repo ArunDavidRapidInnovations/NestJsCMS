@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SigningResponse } from './interfaces/signin-response.interface';
 import { UserRepository } from './schemas/user.repository';
 import { User } from './schemas/user.schema';
 
@@ -8,8 +10,12 @@ import { User } from './schemas/user.schema';
 export class UsersService {
   constructor(private userRepository: UserRepository) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<SigningResponse> {
     return this.userRepository.createUser(createUserDto);
+  }
+
+  async loginUser(loginUserDto: LoginUserDto): Promise<SigningResponse> {
+    return this.userRepository.loginUser(loginUserDto);
   }
 
   findAll() {
@@ -20,11 +26,13 @@ export class UsersService {
     return this.userRepository.getUserById(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+    delete updateUserDto.email;
+    return this.userRepository.updateUser(user, updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(user: User): Promise<string> {
+    await this.userRepository.deleteUser(user);
+    return 'The User has been deleted';
   }
 }
