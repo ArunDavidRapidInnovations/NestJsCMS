@@ -1,13 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
-import { Document, Types } from 'mongoose';
+import { Document, Mongoose, Types } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 
 import { v4 as uuid } from 'uuid';
+import { InternalServerErrorException } from '@nestjs/common';
 
 export type UserDocument = User & Document;
 
 @Schema()
 export class User {
+  getUpdate() {
+    throw new Error('Method not implemented.');
+  }
   @Prop({ type: String, required: true })
   @IsString()
   _id: string;

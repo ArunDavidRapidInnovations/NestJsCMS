@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { InternalServerErrorException, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -20,7 +20,9 @@ import * as bcrypt from 'bcrypt';
         useFactory: () => {
           const schema = UserSchema;
           schema.pre<User>('save', async function () {
-            if (this.isModified('password')) {
+            const base64regex =
+              /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+            if (!base64regex.test(this.password)) {
               const salt = await bcrypt.genSalt();
               const hash = await bcrypt.hash(this.password, salt);
               this.password = hash;
@@ -30,6 +32,7 @@ import * as bcrypt from 'bcrypt';
         },
       },
     ]),
+    // MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
