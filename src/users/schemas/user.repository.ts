@@ -100,4 +100,57 @@ export class UserRepository {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async uploadAvatar(user, fileBuffer, mimetype): Promise<string> {
+    try {
+      const foundUser = await this.userModel.findById(user._id);
+      if (!foundUser) {
+        throw new NotFoundException(
+          'There is no user with this ID in the system.',
+        );
+      }
+      foundUser.avatar = {
+        data: fileBuffer,
+        contentType: mimetype,
+      };
+      await foundUser.save();
+      return 'The Avatar has been updated.';
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getUserAvatar(userID: string): Promise<any> {
+    try {
+      const foundUser = await this.userModel.findOne({ _id: userID });
+      if (!foundUser) {
+        throw new NotFoundException(
+          'There is no user with this ID in the system.',
+        );
+      }
+
+      if (!foundUser.avatar) {
+        throw new NotFoundException('User has not uploaded any avatar.');
+      }
+      return foundUser.avatar.data.buffer;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async deleteAvatar(user): Promise<string> {
+    try {
+      const foundUser = await this.userModel.findById(user._id);
+      if (!foundUser) {
+        throw new NotFoundException(
+          'There is no user with this ID in the system.',
+        );
+      }
+      foundUser.avatar = undefined;
+      await foundUser.save();
+      return 'The Avatar has been Deleted.';
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }

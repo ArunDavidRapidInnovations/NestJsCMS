@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as sharp from 'sharp';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -34,5 +35,26 @@ export class UsersService {
   async remove(user: User): Promise<string> {
     await this.userRepository.deleteUser(user);
     return 'The User has been deleted';
+  }
+
+  async uploadAvatar(user: User, file: Express.Multer.File): Promise<string> {
+    const imgBuffer = await sharp(file.buffer)
+      .resize({ width: 300, height: 300 })
+      .png()
+      .toBuffer();
+
+    return await this.userRepository.uploadAvatar(
+      user,
+      imgBuffer,
+      file.mimetype,
+    );
+  }
+
+  async getUserAvatar(userID: string): Promise<any> {
+    return this.userRepository.getUserAvatar(userID);
+  }
+
+  async deleteAvatar(user: User): Promise<string> {
+    return this.userRepository.deleteAvatar(user);
   }
 }
