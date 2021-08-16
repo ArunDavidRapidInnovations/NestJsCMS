@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User, UserDocument } from './user.schema';
 import * as bcrypt from 'bcrypt';
@@ -36,6 +36,7 @@ export class UserRepository {
       };
       return resData;
     } else {
+      console.log(await bcrypt.compare(password, user.password));
       throw new UnauthorizedException('User Name or Password Error');
     }
   }
@@ -48,6 +49,7 @@ export class UserRepository {
       password,
       email,
       description,
+      _id: new Types.ObjectId(),
     });
     try {
       await createdUser.save();
@@ -56,6 +58,7 @@ export class UserRepository {
       if (error.code == 11000) {
         throw new ConflictException('User already exists.');
       }
+      console.log(error);
       throw new InternalServerErrorException('Some Error Occurred');
     }
   }

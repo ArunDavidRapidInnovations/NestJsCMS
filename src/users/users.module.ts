@@ -20,9 +20,11 @@ import * as bcrypt from 'bcrypt';
         useFactory: () => {
           const schema = UserSchema;
           schema.pre<User>('save', async function () {
-            const salt = await bcrypt.genSalt();
-            const hash = await bcrypt.hash(this.password, salt);
-            this.password = hash;
+            if (this.isModified('password')) {
+              const salt = await bcrypt.genSalt();
+              const hash = await bcrypt.hash(this.password, salt);
+              this.password = hash;
+            }
           });
           return schema;
         },

@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Exclude } from 'class-transformer';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
-import { Document } from 'mongoose';
-import * as bcrypt from 'bcrypt';
+import { Document, Types } from 'mongoose';
 
 import { v4 as uuid } from 'uuid';
 
@@ -10,7 +8,7 @@ export type UserDocument = User & Document;
 
 @Schema()
 export class User {
-  @Prop({ type: String, required: true, default: uuid() })
+  @Prop({ type: String, required: true })
   @IsString()
   _id: string;
 
@@ -42,16 +40,12 @@ export class User {
     data: Buffer;
     contentType: string;
   };
-
-  // @Prop([String])
-  // @IsString({ each: true })
-  // accessTokens: string[];
 }
 
 const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.set('toJSON', {
-  transform: function (doc, ret, options) {
+  transform: function (doc, ret) {
     ret.id = ret._id;
     delete ret._id;
     delete ret.__v;

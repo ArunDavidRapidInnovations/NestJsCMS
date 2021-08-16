@@ -10,7 +10,6 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
-  Header,
   Response,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -21,10 +20,7 @@ import { SigningResponse } from './interfaces/signin-response.interface';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
-import {
-  FileFieldsInterceptor,
-  FileInterceptor,
-} from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import multer from 'multer';
 
 @Controller('users')
