@@ -14,25 +14,25 @@ import * as bcrypt from 'bcrypt';
   providers: [UserRepository, UsersService, JwtStrategy],
   imports: [
     ConfigModule,
-    MongooseModule.forFeatureAsync([
-      {
-        name: User.name,
-        useFactory: () => {
-          const schema = UserSchema;
-          schema.pre<User>('save', async function () {
-            const base64regex =
-              /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-            if (!base64regex.test(this.password)) {
-              const salt = await bcrypt.genSalt();
-              const hash = await bcrypt.hash(this.password, salt);
-              this.password = hash;
-            }
-          });
-          return schema;
-        },
-      },
-    ]),
-    // MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    // MongooseModule.forFeatureAsync([
+    //   {
+    //     name: User.name,
+    //     useFactory: () => {
+    //       const schema = UserSchema;
+    //       // schema.pre<User>('save', async function () {
+    //       //   const base64regex =
+    //       //     /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+    //       //   if (!base64regex.test(this.password)) {
+    //       //     const salt = await bcrypt.genSalt();
+    //       //     const hash = await bcrypt.hash(this.password, salt);
+    //       //     this.password = hash;
+    //       //   }
+    //       // });
+    //       return schema;
+    //     },
+    //   },
+    // ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

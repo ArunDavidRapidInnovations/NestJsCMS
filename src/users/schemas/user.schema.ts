@@ -60,4 +60,18 @@ UserSchema.set('toJSON', {
   },
 });
 
+UserSchema.pre<UserDocument>('save', async function () {
+  // if (this.password.length < 60) {
+  //   const salt = await bcrypt.genSalt();
+  //   const hash = await bcrypt.hash(this.password, salt);
+  //   this.password = hash;
+  // }
+  console.log(this.isModified('password'));
+  if (this.isModified('password')) {
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(this.password, salt);
+    this.password = hash;
+  }
+});
+
 export { UserSchema };
